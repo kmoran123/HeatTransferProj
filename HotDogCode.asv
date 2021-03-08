@@ -21,7 +21,7 @@ emissivityCoals = 0.8;
 emissivityHotDog = 0.45;
 diameterCoals = 0.045;
 
-deltar = 0.001; %**delta r** can be adjusted if needed
+deltar = 0.005; %**delta r** can be adjusted if needed
 alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 
 % h rad calculation
@@ -38,11 +38,6 @@ deltatSurface = (deltar^2 * diameterHotDog * kHotDog)/(alphaHotDog*(2*diameterHo
 deltatInterior = deltar^2/(2*alphaHotDog);
 deltat = 0;
 
-if deltatInterior > deltatSurface 
+if deltatInterior > deltatSurface {
     deltat = deltatInterior;
-    
-else
-    deltat = deltatSurface;
-end
-
     
