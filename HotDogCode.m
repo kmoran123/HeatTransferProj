@@ -35,6 +35,7 @@ hConv = 15;
 %total h
 hTot = hRad + hConv;
 
+
 %stability criteria calculation for delta t
 deltatSurface = (deltar^2 * M * kHotDog)/(alphaHotDog*(2*M*kHotDog - kHotDog + 2*hTot*M*deltar));
 deltatCenter = (deltar^2)/(4*alphaHotDog);
@@ -51,15 +52,19 @@ else
     fprintf('Surface Stability')
 end
 
-%initialize the temp matrix
-temperature = zeros(20000, ceil(M)+1);
+%Calculating Fo and Bi
+Fo = (deltat*alphaHotDog)/deltar^2;
+%Bi = hTot*ro/kHotDog;
+
+%initializing the matrices
+temperature = zeros(16798, ceil(M)+1);
+time=zeros(16798,1);
 temperature(1,:) = initialTemp;
 
 % numerical solution
 % loop until centerline Temp = 60 degrees
 i=1;
-time=zeros(20000,1);
-Fo = (deltat*alphaHotDog)/deltar^2;
+
 while temperature(i,1) < finalTemp
     for j=1:ceil(M)+1
         if j==1
@@ -82,3 +87,19 @@ xmatrix = zeros(128,1);
 for k=1:M+1
     xmatrix(k+1) = k*deltar;
 end
+
+figure
+plot(time, temperature(:,1), time, temperature(:,128));
+title('Numerical Solution');
+xlabel('time, [seconds]')
+ylabel('Temperature, [K]')
+legend('Centerline', 'Surface');
+
+figure
+plot(xmatrix, temperature(22,:), xmatrix, temperature(8468,:), xmatrix, temperature(16798,:));
+title('Numerical Solution');
+xlabel('Distribution, [cm]')
+ylabel('Temperature, [K]')
+legend('t = 0.2976 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+
+
