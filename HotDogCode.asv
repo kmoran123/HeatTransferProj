@@ -27,37 +27,57 @@ M = radiusHotDog/deltar;
 alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 
 % h rad calculation
-hRad = 0;
-
+hRad = 15;
+%hello
 % h convec calculation
-hConv = 0.00001;
+hConv = 15;
 
 %total h
 hTot = hRad + hConv;
 
 %stability criteria calculation for delta t
 deltatSurface = (deltar^2 * M * kHotDog)/(alphaHotDog*(2*M*kHotDog - kHotDog + 2*hTot*M*deltar));
-deltatInterior = deltar^2/(2*alphaHotDog);
-deltatguess = 0.1; %preferred value of delta t that may or may not fit stability criteria
+deltatCenter = (deltar^2)/(4*alphaHotDog);
+deltatInterior = (deltar^2)/(2*alphaHotDog);
 
 %here this is determining which delta t value to use. 0.03 is the default,
 %but if the stability criteria not fulfilled, will use the other values
-if (deltatguess > deltatSurface && deltatguess > deltatInterior) 
-    deltat = deltatguess;
-elseif deltatInterior > deltatSurface 
+if (deltatInterior < deltatSurface && deltatInterior < deltatCenter) 
     deltat = deltatInterior;
+elseif deltatCenter < deltatSurface 
+    deltat = deltatCenter;
 else
     deltat = deltatSurface;
+    fprintf('Surface Stability')
 end
 
 %initialize the temp matrix
-temperature = zeros(1000, ceil(M)+1);
+temperature = zeros(20000, ceil(M)+1);
 temperature(1,:) = initialTemp;
 
 % numerical solution
 % loop until centerline Temp = 60 degrees
 i=1;
-while temperature(i,0) < finalTemp
-    %codey code code
-    i=
+time=zeros(20000,1);
+Fo = (deltat*alphaHotDog)/deltar^2;
+while temperature(i,1) < finalTemp
+    for j=1:ceil(M)+1
+        if j==1
+            temperature(i+1,j) = 4*Fo*temperature(i, j+1) - (4*Fo-1)*temperature(i,j);
+        elseif j==ceil(M)+1
+            temperature(i+1, j) = (1 - 2*Fo*(1-(1/(2*M))) - 2*(hTot/kHotDog)*Fo*deltar)*temperature(i,j) + ...
+                2*Fo*(1-(1/(2*M)))*temperature(i, j-1) + 2*(hTot/kHotDog)*Fo*deltar*gasTemp;
+        else
+            temperature(i+1, j) = (1-2*Fo)*temperature(i,j) + Fo*(1-(1/(2*(j-1))))*temperature(i, j-1) + ...
+                Fo*(1+(1/(2*(j-1))))*temperature(i, j+1);
+        end
+            
+    end
+    time(i+1) = deltat*i;
+    i=i+1;
+    
 end
+
+xmatrix = zeros(128,1);
+for k=2:M
+    xmatrix(k)
