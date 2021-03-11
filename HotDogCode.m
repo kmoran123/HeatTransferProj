@@ -28,7 +28,7 @@ alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 
 % h rad calculation
 hRad = 0;
-
+%hello
 % h convec calculation
 hConv = 0.00001;
 
