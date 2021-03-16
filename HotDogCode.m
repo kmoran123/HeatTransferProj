@@ -41,8 +41,7 @@ deltatSurface = (deltar^2 * M * kHotDog)/(alphaHotDog*(2*M*kHotDog - kHotDog + 2
 deltatCenter = (deltar^2)/(4*alphaHotDog);
 deltatInterior = (deltar^2)/(2*alphaHotDog);
 
-%here this is determining which delta t value to use. 0.03 is the default,
-%but if the stability criteria not fulfilled, will use the other values
+%choosing the smallest deltat based on stability criteria
 if (deltatInterior < deltatSurface && deltatInterior < deltatCenter) 
     deltat = deltatInterior;
 elseif deltatCenter < deltatSurface 
