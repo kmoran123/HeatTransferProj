@@ -27,10 +27,10 @@ M = radiusHotDog/deltar;
 alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 
 % h rad calculation
-hRad = 15;
+hRad = 5;
 %hello
 % h convec calculation
-hConv = 15;
+hConv = 10;
 
 %total h
 hTot = hRad + hConv;
@@ -112,91 +112,95 @@ Table=  [0,       0.1412,  0.1995,  0.2814,  0.3438,  0.396,   0.4417,  0.5376, 
 p = 1;
 theta = zeros(20000, ceil(M)+1);
 temp = zeros(20000, ceil(M)+1);
-term = zeros(7,1);
 time_a=zeros(20000,1);
+temp(1, :) = initialTemp;
+Bi = hTot*(radiusHotDog)/kHotDog;
+
+%interpolating from table!
+if Bi == 0
+    squiggle = Table(:,1);
+elseif Bi>0 && Bi<0.01
+    squiggle = Table(:,2)-((0.01-Bi)./((0.01-0)./(Table(:,2)-Table(:,1))));
+elseif Bi == 0.01
+    squiggle = Table(:,2);
+elseif Bi>0.01 && Bi<0.02
+    squiggle = Table(:,3)-((0.02-Bi)./((0.02-0.01)./(Table(:,3)-Table(:,2))));
+elseif Bi == 0.02
+    squiggle = Table(:,3);
+elseif Bi>0.02 && Bi<0.04
+    squiggle = Table(:,4)-((0.04-Bi)./((0.04-0.02)./(Table(:,4)-Table(:,3))));
+elseif Bi == 0.04
+    squiggle = Table(:,4);
+elseif Bi>0.04 && Bi<0.06
+    squiggle = Table(:,5)-((0.06-Bi)./((0.06-0.04)./(Table(:,5)-Table(:,4))));
+elseif Bi == 0.06
+    squiggle = Table(:,5);
+elseif Bi>0.06 && Bi<0.08
+    squiggle = Table(:,6)-((0.08-Bi)./((0.08-0.06)./(Table(:,6)-Table(:,5))));
+elseif Bi == 0.08
+    squiggle = Table(:,6);
+elseif Bi>0.08 && Bi<0.1
+    squiggle = Table(:,7)-((0.1-Bi)./((0.1-0.08)./(Table(:,7)-Table(:,6))));
+elseif Bi == 0.1
+    squiggle = Table(:,7);
+elseif Bi>0.1 && Bi<0.15
+    squiggle = Table(:,8)-((0.15-Bi)./((0.15-0.1)./(Table(:,8)-Table(:,7))));
+elseif Bi == 0.15
+    squiggle = Table(:,8);
+elseif Bi>0.15 && Bi<0.2
+    squiggle = Table(:,9)-((0.2-Bi)./((0.2-0.15)./(Table(:,9)-Table(:,8))));
+elseif Bi == 0.2
+    squiggle = Table(:,9);
+elseif Bi>0.2 && Bi<0.3
+    squiggle = Table(:,10)-((0.3-Bi)./((0.3-0.2)./(Table(:,10)-Table(:,9))));
+elseif Bi == 0.3
+    squiggle = Table(:,10);
+elseif Bi>0.3 && Bi<0.4
+    squiggle = Table(:,11)-((0.4-Bi)./((0.4-0.3)./(Table(:,11)-Table(:,10))));
+elseif Bi == 0.4
+    squiggle = Table(:,11);
+elseif Bi>0.4 && Bi<0.5
+    squiggle = Table(:,12)-((0.5-Bi)./((0.5-0.4)./(Table(:,12)-Table(:,11))));
+else %Bi == 0.5
+    squiggle = Table(:,12);
+end
 
 %determining temp at different times and various positions(vary based on
 %analytical solution)
 while temp(p,1) < finalTemp
     for q=1:ceil(M)+1
-        
+        time_a(p+1) = time_a(p) + 0.1;
         %Calculating Fo and Bi
-        fo = (p.*alphaHotDog)./(q).^2;
-        Bi = hTot*(q)/kHotDog;
-    
-        %interpolating from table!
-        if Bi == 0 
-            squiggle = Table(:,1);
-        elseif Bi>0 && Bi<0.01
-            squiggle = Table(:,2)-((0.01-Bi)./((0.01-0)./(Table(:,2)-Table(:,1))));
-        elseif Bi == 0.01
-            squiggle = Table(:,2);
-        elseif Bi>0.01 && Bi<0.02
-            squiggle = Table(:,3)-((0.02-Bi)./((0.02-0.01)./(Table(:,3)-Table(:,2))));
-        elseif Bi == 0.02
-            squiggle = Table(:,3);
-        elseif Bi>0.02 && Bi<0.04
-            squiggle = Table(:,4)-((0.04-Bi)./((0.04-0.02)./(Table(:,4)-Table(:,3))));  
-        elseif Bi == 0.04
-            squiggle = Table(:,4);
-        elseif Bi>0.04 && Bi<0.06
-            squiggle = Table(:,5)-((0.06-Bi)./((0.06-0.04)./(Table(:,5)-Table(:,4))));
-        elseif Bi == 0.06
-            squiggle = Table(:,5);
-        elseif Bi>0.06 && Bi<0.08
-            squiggle = Table(:,6)-((0.08-Bi)./((0.08-0.06)./(Table(:,6)-Table(:,5))));    
-        elseif Bi == 0.08
-            squiggle = Table(:,6);
-        elseif Bi>0.08 && Bi<0.1
-            squiggle = Table(:,7)-((0.1-Bi)./((0.1-0.08)./(Table(:,7)-Table(:,6))));
-        elseif Bi == 0.1
-            squiggle = Table(:,7); 
-        elseif Bi>0.1 && Bi<0.15
-            squiggle = Table(:,8)-((0.15-Bi)./((0.15-0.1)./(Table(:,8)-Table(:,7))));
-        elseif Bi == 0.15
-            squiggle = Table(:,8);
-        elseif Bi>0.15 && Bi<0.2
-            squiggle = Table(:,9)-((0.2-Bi)./((0.2-0.15)./(Table(:,9)-Table(:,8))));
-        elseif Bi == 0.2
-            squiggle = Table(:,9);
-        elseif Bi>0.2 && Bi<0.3
-            squiggle = Table(:,10)-((0.3-Bi)./((0.3-0.2)./(Table(:,10)-Table(:,9))));
-        elseif Bi == 0.3
-            squiggle = Table(:,10);
-        elseif Bi>0.3 && Bi<0.4
-            squiggle = Table(:,11)-((0.4-Bi)./((0.4-0.3)./(Table(:,11)-Table(:,10))));
-        elseif Bi == 0.4
-            squiggle = Table(:,11);
-        elseif Bi>0.4 && Bi<0.5
-            squiggle = Table(:,12)-((0.5-Bi)./((0.5-0.4)./(Table(:,12)-Table(:,11))));
-        else %Bi == 0.5
-            squiggle = Table(:,12);  
-        end    
-   
-        %calculating each nth term 
-        for r=1:6    
-            term(p,q) = ((2/squiggle(r)) * besselj(1,squiggle(r)) / ...
-            (((besselj(0,squiggle(r)))^2)*((besselj(1,squiggle(r)))^2)))* ...
-            exp(-(squiggle(r)^2)*fo)*besselj(0,(squiggle(r)*q));     
-     
+        fo = (time_a(p+1)*alphaHotDog)./(radiusHotDog.^2);
+        
+        %calculating each nth term
+        term1 = ((2/squiggle(1)) * besselj(1,squiggle(1)) / ...
+            (((besselj(0,squiggle(1)))^2)+((besselj(1,squiggle(1)))^2)))* ...
+            exp(-(squiggle(1)^2)*fo)*besselj(0,(squiggle(1)*(q-1)*deltar/radiusHotDog));
+        term2 = ((2/squiggle(2)) * besselj(1,squiggle(2)) / ...
+            (((besselj(0,squiggle(2)))^2)+((besselj(1,squiggle(2)))^2)))* ...
+            exp(-(squiggle(2)^2)*fo)*besselj(0,(squiggle(2)*(q-1)*deltar/radiusHotDog));
+        term3 = ((2/squiggle(3)) * besselj(1,squiggle(3)) / ...
+            (((besselj(0,squiggle(3)))^2)+((besselj(1,squiggle(3)))^2)))* ...
+            exp(-(squiggle(3)^2)*fo)*besselj(0,(squiggle(3)*(q-1)*deltar/radiusHotDog));
+        term4 = ((2/squiggle(4)) * besselj(1,squiggle(4)) / ...
+            (((besselj(0,squiggle(4)))^2)+((besselj(1,squiggle(4)))^2)))* ...
+            exp(-(squiggle(4)^2)*fo)*besselj(0,(squiggle(4)*(q-1)*deltar/radiusHotDog));
+        term5 = ((2/squiggle(5)) * besselj(1,squiggle(5)) / ...
+            (((besselj(0,squiggle(5)))^2)+((besselj(1,squiggle(5)))^2)))* ...
+            exp(-(squiggle(5)^2)*fo)*besselj(0,(squiggle(5)*(q-1)*deltar/radiusHotDog));
+        term6 = ((2/squiggle(6)) * besselj(1,squiggle(6)) / ...
+            (((besselj(0,squiggle(6)))^2)+((besselj(1,squiggle(6)))^2)))* ...
+            exp(-(squiggle(6)^2)*fo)*besselj(0,(squiggle(6)*(q-1)*deltar/radiusHotDog));
+        
         %summing all the terms
-        theta(p,q) = theta(p,q) + term(p,q);
-    
-        end
-    
+        theta(p+1,q) = term1 + term2 + term3 + term4 + term5 + term6;
+        
         %calculating temperature
-        temp(p,q) = theta(p,q) * (initialTemp - gasTemp) + gasTemp;
-    
+        temp(p+1,q) = theta(p+1,q) .* (initialTemp - gasTemp) + gasTemp;
+        
     end
     
-    %time matrix
-    time_a(p+1) = deltat*p;
     p=p+1;
     
-end     
-     
-     
-     
-     
-     
-
+end
