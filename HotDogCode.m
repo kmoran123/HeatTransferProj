@@ -50,6 +50,8 @@ else
     deltat = deltatSurface;
     fprintf('Surface Stability')
 end
+
+
 % 
 % %Calculating Fo
 % Fo = (deltat*alphaHotDog)/deltar^2;
