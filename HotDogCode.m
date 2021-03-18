@@ -120,11 +120,11 @@ ylabel('Temperature, [K]')
 legend('Centerline', 'Surface');
 
 figure
-plot(xmatrix, temperature(22,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
+plot(xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
 title('Numerical Solution');
-xlabel('Distribution, [cm]')
+xlabel('Radius, [cm]')
 ylabel('Temperature, [K]')
-legend('t = 0.2976 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
 
 % analytical solution -----------------------------------------------------
 
@@ -137,9 +137,9 @@ Table=  [0,       0.1412,  0.1995,  0.2814,  0.3438,  0.396,   0.4417,  0.5376, 
          16.4706, 16.4712, 16.4718, 16.4731, 16.4743, 16.4755, 14.4767, 16.4797, 16.4828, 16.4888, 16.4949, 16.501];
 
 p = 1;
-theta = zeros(5000, ceil(M)+1);
-temp = zeros(5000, ceil(M)+1);
-time_a=zeros(5000,1);
+theta = zeros(3025, ceil(M)+1);
+temp = zeros(3025, ceil(M)+1);
+time_a=zeros(3025,1);
 temp(1, :) = initialTemp;
 Bi = hTot*(radiusHotDog)/kHotDog;
 
@@ -231,3 +231,17 @@ while temp(p,1) < finalTemp
     p=p+1;
     
 end
+
+figure
+plot(time_a, temp(:,1), time_a, temp(:,128));
+title('Analytical Solution');
+xlabel('time, [seconds]')
+ylabel('Temperature, [K]')
+legend('Centerline', 'Surface');
+
+figure
+plot(xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
+title('Analytical Solution');
+xlabel('Radius, [cm]')
+ylabel('Temperature, [K]')
+legend('t = 30 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
