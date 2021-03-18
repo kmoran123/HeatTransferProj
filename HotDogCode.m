@@ -29,6 +29,7 @@ alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 % h rad calculation
 hRad = 5;
 %hello
+
 % h convec calculation
 hConv = 10;
 
@@ -55,8 +56,8 @@ end
 % Fo = (deltat*alphaHotDog)/deltar^2;
 % 
 % %initializing the matrices
-% temperature = zeros(16798, ceil(M)+1);
-% time=zeros(16798,1);
+% temperature = zeros(20000, ceil(M)+1);
+% time=zeros(20000,1);
 % temperature(1,:) = initialTemp;
 % 
 % % loop until centerline Temp = 60 degrees
@@ -93,7 +94,7 @@ end
 % legend('Centerline', 'Surface');
 % 
 % figure
-% plot(xmatrix, temperature(22,:), xmatrix, temperature(8468,:), xmatrix, temperature(16798,:));
+% plot(xmatrix, temperature(22,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
 % title('Numerical Solution');
 % xlabel('Distribution, [cm]')
 % ylabel('Temperature, [K]')
@@ -110,9 +111,9 @@ Table=  [0,       0.1412,  0.1995,  0.2814,  0.3438,  0.396,   0.4417,  0.5376, 
          16.4706, 16.4712, 16.4718, 16.4731, 16.4743, 16.4755, 14.4767, 16.4797, 16.4828, 16.4888, 16.4949, 16.501];
 
 p = 1;
-theta = zeros(20000, ceil(M)+1);
-temp = zeros(20000, ceil(M)+1);
-time_a=zeros(20000,1);
+theta = zeros(5000, ceil(M)+1);
+temp = zeros(5000, ceil(M)+1);
+time_a=zeros(5000,1);
 temp(1, :) = initialTemp;
 Bi = hTot*(radiusHotDog)/kHotDog;
 
@@ -170,7 +171,7 @@ end
 while temp(p,1) < finalTemp
     for q=1:ceil(M)+1
         time_a(p+1) = time_a(p) + 0.1;
-        %Calculating Fo and Bi
+        %Calculating Fo
         fo = (time_a(p+1)*alphaHotDog)./(radiusHotDog.^2);
         
         %calculating each nth term
