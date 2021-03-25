@@ -90,7 +90,7 @@ temperature(1,:) = initialTemp;
 i=1;
 
 while temperature(i,1) < finalTemp
-    for j=1:ceil(M)+1
+    for j=1:ceil(M)+1 %loop through each radial node
         if j==1
             temperature(i+1,j) = 4*Fo*temperature(i, j+1) - (4*Fo-1)*temperature(i,j);
         elseif j==ceil(M)+1
@@ -107,7 +107,7 @@ while temperature(i,1) < finalTemp
     
 end
 
-xmatrix = zeros(128,1);
+xmatrix = zeros(128,1); % creating the radius matrix for each node
 for k=1:M+1
     xmatrix(k+1) = k*deltar;
 end
@@ -118,13 +118,14 @@ title('Numerical Solution for Centerline/Surface Temperature vs Time');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
 legend('Centerline', 'Surface');
+xlim([0, 305])
 
 figure
 plot(xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
-title('Numerical Solution for Temperature at Specified Times as a Function of Distance');
+title('Numerical Solution for Temperature vs Distance at Specified Times');
 xlabel('Radius, [cm]')
 ylabel('Temperature, [K]')
-legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 301.773 seconds');
 xlim([0, radiusHotDog])
 
 % analytical solution -----------------------------------------------------
@@ -239,11 +240,12 @@ title('Analytical Solution for Centerline/Surface Temperature vs Time');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
 legend('Centerline', 'Surface');
+xlim([0, 305])
 
 figure
 plot(xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
-title('Analytical Solution for Temperature at Specified Times as a Function of ');
+title('Analytical Solution for Temperature vs Distance at Specified Times');
 xlabel('Radius, [cm]')
 ylabel('Temperature, [K]')
-legend('t = 30 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+legend('t = 30 sec', 't = 120 seconds', 't = 302.4 seconds');
 xlim([0, radiusHotDog])

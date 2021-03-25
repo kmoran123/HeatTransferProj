@@ -90,13 +90,13 @@ temperature(1,:) = initialTemp;
 i=1;
 
 while temperature(i,1) < finalTemp
-    for j=1:ceil(M)+1
-        if j==1
+    for j=1:ceil(M)+1 %loop through each radial node
+        if j==1 %center node
             temperature(i+1,j) = 4*Fo*temperature(i, j+1) - (4*Fo-1)*temperature(i,j);
-        elseif j==ceil(M)+1
+        elseif j==ceil(M)+1 %surface node
             temperature(i+1, j) = (1 - 2*Fo*(1-(1/(2*M))) - 2*(hTot/kHotDog)*Fo*deltar)*temperature(i,j) + ...
                 2*Fo*(1-(1/(2*M)))*temperature(i, j-1) + 2*(hTot/kHotDog)*Fo*deltar*gasTemp;
-        else
+        else %all other interior nodes
             temperature(i+1, j) = (1-2*Fo)*temperature(i,j) + Fo*(1-(1/(2*(j-1))))*temperature(i, j-1) + ...
                 Fo*(1+(1/(2*(j-1))))*temperature(i, j+1);
         end
@@ -107,7 +107,7 @@ while temperature(i,1) < finalTemp
     
 end
 
-xmatrix = zeros(128,1);
+xmatrix = zeros(128,1); % creating the radius matrix for each node
 for k=1:M+1
     xmatrix(k+1) = k*deltar;
 end
