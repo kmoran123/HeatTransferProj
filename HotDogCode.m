@@ -114,17 +114,19 @@ end
 
 figure
 plot(time, temperature(:,1), time, temperature(:,128));
-title('Numerical Solution');
+title('Numerical Solution for Centerline/Surface Temperature vs Time');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
 legend('Centerline', 'Surface');
+xlim([0, 305])
 
 figure
 plot(xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
-title('Numerical Solution');
+title('Numerical Solution for Temperature vs Distance at Specified Times');
 xlabel('Radius, [cm]')
 ylabel('Temperature, [K]')
-legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 301.773 seconds');
+xlim([0, radiusHotDog])
 
 % analytical solution -----------------------------------------------------
 
@@ -234,14 +236,16 @@ end
 
 figure
 plot(time_a, temp(:,1), time_a, temp(:,128));
-title('Analytical Solution');
+title('Analytical Solution for Centerline/Surface Temperature vs Time');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
 legend('Centerline', 'Surface');
+xlim([0, 305])
 
 figure
 plot(xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
-title('Analytical Solution');
+title('Analytical Solution for Temperature vs Distance at Specified Times');
 xlabel('Radius, [cm]')
 ylabel('Temperature, [K]')
-legend('t = 30 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+legend('t = 30 sec', 't = 120 seconds', 't = 302.4 seconds');
+xlim([0, radiusHotDog])

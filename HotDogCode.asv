@@ -27,10 +27,10 @@ M = radiusHotDog/deltar;
 alphaHotDog = kHotDog/(densityHotDog*cHotDog);
 
 %velocity
-velocityAir = 2;
+velocityAir = 0.5;
 
 % h rad calculation
-hRad = 10;
+hRad = 5;
 
 % h convec calculation
 % calculating the air properties
@@ -53,9 +53,9 @@ Re = velocityAir*diameterHotDog / nuFilm;
 C = 0.683;
 mConst = 0.466;
 
-Nu = C*Re^mConst
+Nu = C*Re^mConst*PrFilm^(1/3);
 
-hConv = 10;
+hConv = Nu*kAirFilm/diameterHotDog;
 
 %total h
 hTot = hRad + hConv;
@@ -77,54 +77,55 @@ else
 end
 
 
-% 
-% %Calculating Fo
-% Fo = (deltat*alphaHotDog)/deltar^2;
-% 
-% %initializing the matrices
-% temperature = zeros(20000, ceil(M)+1);
-% time=zeros(20000,1);
-% temperature(1,:) = initialTemp;
-% 
-% % loop until centerline Temp = 60 degrees
-% i=1;
-% 
-% while temperature(i,1) < finalTemp
-%     for j=1:ceil(M)+1
-%         if j==1
-%             temperature(i+1,j) = 4*Fo*temperature(i, j+1) - (4*Fo-1)*temperature(i,j);
-%         elseif j==ceil(M)+1
-%             temperature(i+1, j) = (1 - 2*Fo*(1-(1/(2*M))) - 2*(hTot/kHotDog)*Fo*deltar)*temperature(i,j) + ...
-%                 2*Fo*(1-(1/(2*M)))*temperature(i, j-1) + 2*(hTot/kHotDog)*Fo*deltar*gasTemp;
-%         else
-%             temperature(i+1, j) = (1-2*Fo)*temperature(i,j) + Fo*(1-(1/(2*(j-1))))*temperature(i, j-1) + ...
-%                 Fo*(1+(1/(2*(j-1))))*temperature(i, j+1);
-%         end
-%             
-%     end
-%     time(i+1) = deltat*i;
-%     i=i+1;
-%     
-% end
-% 
-% xmatrix = zeros(128,1);
-% for k=1:M+1
-%     xmatrix(k+1) = k*deltar;
-% end
 
-% figure
-% plot(time, temperature(:,1), time, temperature(:,128));
-% title('Numerical Solution');
-% xlabel('time, [seconds]')
-% ylabel('Temperature, [K]')
-% legend('Centerline', 'Surface');
-% 
-% figure
-% plot(xmatrix, temperature(22,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
-% title('Numerical Solution');
-% xlabel('Distribution, [cm]')
-% ylabel('Temperature, [K]')
-% legend('t = 0.2976 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+%Calculating Fo
+Fo = (deltat*alphaHotDog)/deltar^2;
+
+%initializing the matrices
+temperature = zeros(20000, ceil(M)+1);
+time=zeros(20000,1);
+temperature(1,:) = initialTemp;
+
+% loop until centerline Temp = 60 degrees
+i=1;
+
+while temperature(i,1) < finalTemp
+    for j=1:ceil(M)+1
+        if j==1
+            temperature(i+1,j) = 4*Fo*temperature(i, j+1) - (4*Fo-1)*temperature(i,j);
+        elseif j==ceil(M)+1
+            temperature(i+1, j) = (1 - 2*Fo*(1-(1/(2*M))) - 2*(hTot/kHotDog)*Fo*deltar)*temperature(i,j) + ...
+                2*Fo*(1-(1/(2*M)))*temperature(i, j-1) + 2*(hTot/kHotDog)*Fo*deltar*gasTemp;
+        else
+            temperature(i+1, j) = (1-2*Fo)*temperature(i,j) + Fo*(1-(1/(2*(j-1))))*temperature(i, j-1) + ...
+                Fo*(1+(1/(2*(j-1))))*temperature(i, j+1);
+        end
+            
+    end
+    time(i+1) = deltat*i;
+    i=i+1;
+    
+end
+
+xmatrix = zeros(128,1);
+for k=1:M+1
+    xmatrix(k+1) = k*deltar;
+end
+
+figure
+plot(time, temperature(:,1), time, temperature(:,128));
+title('Numerical Solution for Centerline/Surface Temperature vs Time');
+xlabel('time, [seconds]')
+ylabel('Temperature, [K]')
+legend('Centerline', 'Surface');
+
+figure
+plot(xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
+title('Numerical Solution for Temperature at Specified Times as a Function of Distance');
+xlabel('Radius, [cm]')
+ylabel('Temperature, [K]')
+legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+xlim([0, radiusHotDog])
 
 % analytical solution -----------------------------------------------------
 
@@ -137,9 +138,9 @@ Table=  [0,       0.1412,  0.1995,  0.2814,  0.3438,  0.396,   0.4417,  0.5376, 
          16.4706, 16.4712, 16.4718, 16.4731, 16.4743, 16.4755, 14.4767, 16.4797, 16.4828, 16.4888, 16.4949, 16.501];
 
 p = 1;
-theta = zeros(5000, ceil(M)+1);
-temp = zeros(5000, ceil(M)+1);
-time_a=zeros(5000,1);
+theta = zeros(3025, ceil(M)+1);
+temp = zeros(3025, ceil(M)+1);
+time_a=zeros(3025,1);
 temp(1, :) = initialTemp;
 Bi = hTot*(radiusHotDog)/kHotDog;
 
@@ -231,3 +232,18 @@ while temp(p,1) < finalTemp
     p=p+1;
     
 end
+
+figure
+plot(time_a, temp(:,1), time_a, temp(:,128));
+title('Analytical Solution for Centerline/Surface Temperature vs Time');
+xlabel('time, [seconds]')
+ylabel('Temperature, [K]')
+legend('Centerline', 'Surface');
+
+figure
+plot(xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
+title('Analytical Solution for Temperature at Specified Times as a Function of ');
+xlabel('Radius, [cm]')
+ylabel('Temperature, [K]')
+legend('t = 30 sec', 't = 120.0034 seconds', 't = 238.0652 seconds');
+xlim([0, radiusHotDog])
