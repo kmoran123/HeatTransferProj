@@ -1,50 +1,51 @@
 clear
 clc
+close all
 format compact
 
 % Transport 3 Hot Dog Project Code
-% for Katy Moran and Anna Hartig
+% for Katy Moran, Anna Hartig, and Hayley Semple
 
+% list of material properties and design constraints with units. 
+densityHotDog = 880;                                %[kg/m^3]
+kHotDog = 0.52;                                     %[W/m-K]
+cHotDog = 3350;                                     %[K/kg-K]
+diameterHotDog = 0.0254;                            %[m]
+radiusHotDog = diameterHotDog/2;                    %[m]
 
-% list of material properties and design constraints
-densityHotDog = 880;
-kHotDog = 0.52;
-cHotDog = 3350;
-diameterHotDog = 0.0254;
-radiusHotDog = diameterHotDog/2;
-
-initialTemp = 15 + 273.15;
-maxTs = 100 + 273.15;
-finalTemp = 60 + 273.15;
-gasTemp = 295 + 273.15;
-coalsTemp = 425 + 273.15;
-emissivityCoals = 0.8;
+initialTemp = 15 + 273.15;                          %[K]
+maxTs = 100 + 273.15;                               %[K]
+finalTemp = 60 + 273.15;                            %[K]
+gasTemp = 295 + 273.15;                             %[K]
+coalsTemp = 425 + 273.15;                           %[K]
+emissivityCoals = 0.8;                  
 emissivityHotDog = 0.45;
-diameterCoals = 0.045;
+diameterCoals = 0.045;                              %[m]
 
-deltar = 0.0001; %**delta r** can be adjusted if needed
-M = radiusHotDog/deltar;
-alphaHotDog = kHotDog/(densityHotDog*cHotDog);
+deltar = 0.0001; %**delta r** can be adjusted if needed %[m]
+M = radiusHotDog/deltar;        
+alphaHotDog = kHotDog/(densityHotDog*cHotDog);      %[m^2/s]
 
 %velocity
-velocityAir = 0.5;
+velocityAir = 0.5;                                  %[m/s]
 
+% % Calculating coefficients, h -------------------------------------------
 % h rad calculation
-hRad = 5;
+hRad = 5;                                           %[W/m^2-K]
 
 % h convec calculation
 % calculating the air properties
-TsurfaceHCalc = (initialTemp + gasTemp)/2;
-% interpolating the properties of air
-lowTemp = 400;
-highTemp = 450;
+TsurfaceHCalc = (initialTemp + gasTemp)/2;          %[K]
+lowTemp = 400;                                      %[K]
+highTemp = 450;                                     %[K]
 nuLow = 26.41e-6;
 nuHigh = 32.39e-6;
-kAirLow = 33.8e-3;
-kAirHigh = 37.3e-3;
+kAirLow = 33.8e-3;                                  %[W/m-K]
+kAirHigh = 37.3e-3;                                 %[W/m-K]
 PrLow = 0.690;
 PrHigh = 0.686;
 
+% interpolating the properties of air
 nuFilm = nuLow + (TsurfaceHCalc - lowTemp)*(nuHigh-nuLow)/(highTemp-lowTemp);
 kAirFilm = kAirLow + (TsurfaceHCalc - lowTemp)*(kAirHigh-kAirLow)/(highTemp-lowTemp);
 PrFilm = PrLow + (TsurfaceHCalc - lowTemp)*(PrHigh-PrLow)/(highTemp-lowTemp);
@@ -75,8 +76,6 @@ else
     deltat = deltatSurface;
     fprintf('Surface Stability')
 end
-
-
 
 %Calculating Fo
 Fo = (deltat*alphaHotDog)/deltar^2;
@@ -112,23 +111,16 @@ for k=1:M+1
     xmatrix(k+1) = k*deltar;
 end
 
+%Plotting Numerical Solution (Temperature Distribution)
 figure
-plot(time, temperature(:,1), time, temperature(:,128));
-title('Numerical Solution for Centerline/Surface Temperature vs Time');
-xlabel('time, [seconds]')
+plot(xmatrix, temperature(1,:), xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
+title('Numerical Solution for Temperature Distribution at Specified Times');
+xlabel('Radius, [m]')
 ylabel('Temperature, [K]')
-legend('Centerline', 'Surface');
-xlim([0, 305])
-
-figure
-plot(xmatrix, temperature(2118,:), xmatrix, temperature(8468,:), xmatrix, temperature(i,:));
-title('Numerical Solution for Temperature vs Distance at Specified Times');
-xlabel('Radius, [cm]')
-ylabel('Temperature, [K]')
-legend('t = 30.0044 sec', 't = 120.0034 seconds', 't = 301.773 seconds');
+legend('t = 0 sec', 't = 30.0044 sec', 't = 120.0034 seconds', 't = 301.773 seconds');
 xlim([0, radiusHotDog])
 
-% analytical solution -----------------------------------------------------
+% % Analytical solution -----------------------------------------------------
 
 Bi_Tab= [0,       0.01,    0.02,    0.04,    0.06,    0.08,    0.1,     0.15,    0.2,     0.3,     0.4,     0.5];    
 Table=  [0,       0.1412,  0.1995,  0.2814,  0.3438,  0.396,   0.4417,  0.5376,  0.617,   0.7465,  0.8516,  0.9408; ...
@@ -234,18 +226,20 @@ while temp(p,1) < finalTemp
     
 end
 
+%Plotting Centerline/Exterior Solution
 figure
-plot(time_a, temp(:,1), time_a, temp(:,128));
-title('Analytical Solution for Centerline/Surface Temperature vs Time');
+plot(time_a, temp(:,1), 'b' , time_a, temp(:,128), 'r',  time, temperature(:,1), '--b', time, temperature(:,128), '--r');
+title('Hot Dog Temperature History');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
-legend('Centerline', 'Surface');
+legend('Centerline, Analytical', 'Exterior, Analytical', 'Centerline, Numerical', 'Exterior, Numerical');
 xlim([0, 305])
 
+%Plotting Analytical Solution (Temperature Distribution)
 figure
-plot(xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
-title('Analytical Solution for Temperature vs Distance at Specified Times');
-xlabel('Radius, [cm]')
+plot(xmatrix, temp(1,:), xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, temp(p,:));
+title('Analytical Solution for Temperature Distribution at Specified Times');
+xlabel('Radius, [m]')
 ylabel('Temperature, [K]')
-legend('t = 30 sec', 't = 120 seconds', 't = 302.4 seconds');
+legend('t = 0 sec', 't = 30 sec', 't = 120 seconds', 't = 302.4 seconds');
 xlim([0, radiusHotDog])
