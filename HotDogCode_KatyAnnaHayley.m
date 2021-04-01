@@ -26,8 +26,9 @@ deltar = 0.0001; %**delta r** can be adjusted if needed %[m]
 M = radiusHotDog/deltar;        
 alphaHotDog = kHotDog/(densityHotDog*cHotDog);      %[m^2/s]
 
-%velocity
-velocityAir = 0.5;                                  %[m/s]
+% calculating velocity of air
+beta = 1/((coalsTemp + gasTemp)/2);
+velocityAir = sqrt(9.81*beta*(coalsTemp - gasTemp)*diameterCoals);   %[m/s]
 
 % % Calculating coefficients, h -------------------------------------------
 % h rad calculation
@@ -117,7 +118,7 @@ plot(xmatrix, temperature(1,:), xmatrix, temperature(2118,:), xmatrix, temperatu
 title('Numerical Solution for Temperature Distribution at Specified Times');
 xlabel('Radius, [m]')
 ylabel('Temperature, [K]')
-legend('t = 0 sec', 't = 30.0044 sec', 't = 120.0034 seconds', 't = 301.773 seconds');
+legend('t = 0 sec', 't = 30.0044 sec', 't = 120.0034 seconds', 't = 333.9319 seconds');
 xlim([0, radiusHotDog])
 
 % % Analytical solution -----------------------------------------------------
@@ -233,7 +234,7 @@ title('Hot Dog Temperature History');
 xlabel('time, [seconds]')
 ylabel('Temperature, [K]')
 legend('Centerline, Analytical', 'Exterior, Analytical', 'Centerline, Numerical', 'Exterior, Numerical');
-xlim([0, 305])
+xlim([0, 335])
 
 %Plotting Analytical Solution (Temperature Distribution)
 figure
@@ -241,5 +242,5 @@ plot(xmatrix, temp(1,:), xmatrix, temp(301,:), xmatrix, temp(1201,:), xmatrix, t
 title('Analytical Solution for Temperature Distribution at Specified Times');
 xlabel('Radius, [m]')
 ylabel('Temperature, [K]')
-legend('t = 0 sec', 't = 30 sec', 't = 120 seconds', 't = 302.4 seconds');
+legend('t = 0 sec', 't = 30 sec', 't = 120 seconds', 't = 334.14 seconds');
 xlim([0, radiusHotDog])
