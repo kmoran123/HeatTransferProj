@@ -32,18 +32,16 @@ velocityAir = sqrt(9.81*beta*(coalsTemp - gasTemp)*diameterCoals);   %[m/s]
 
 % % Calculating coefficients, h -------------------------------------------
 % h rad calculation
-L = 0.15; %%%*********
-Acoals = 0.35*1; %finding area of coals assuming depth = 1m
-AhotDog = 1*2*pi()*radiusHotDog; %finding entire surface area of hot dog assuming depth = 1m
-s1 = 0.21; %distance from left edge to hot dog
-s2 = -0.14; %distance from right edge to hot dog
-F12 = (radiusHotDog/(s1-s2))*(atan(s1/L)-atan(s2/L)); %from Table 13.1
+L = 0.10; %%%*********
+Acoals = 0.35*1;
+AhotDog = 1*2*pi()*radiusHotDog;
+s1 = 0.21;
+s2 = -0.14;
+F12 = (radiusHotDog/(s1-s2))*(atan(s1/L)-atan(s2/L));
 F21 = F12*Acoals/AhotDog; %finding F21 by reciprocity
 sigma = 5.671e-08;
-TsurfAvg = (15+100)/2 + 273.15; %average surface temperature
-TStarAvg = TsurfAvg/((emissivityCoals*F21)^(1/4)); %finding Ts* assuming that constant surface temp can be approximated with Ts avg
-hRad = emissivityHotDog*emissivityCoals*F21*sigma*(coalsTemp + TStarAvg)... %calculating hRad
-    *(coalsTemp^2 + TStarAvg^2);   %[W/m^2-K]
+TsurfAvg = (15+100)/2 + 273.1
+hRad = 5;                                           %[W/m^2-K]
 
 % h convec calculation
 % calculating the air properties
